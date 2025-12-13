@@ -25,25 +25,20 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      # 添加 upstream（如果不存在）
-      - name: Add upstream remote
+      # 添加 upstream（如果不存在），并拉取 origin 的最新状态
+      - name: Add upstream remote and fetch
         run: |
           git remote add upstream https://github.com/PKUFlyingPig/cs-self-learning || true
           git fetch upstream
+          git fetch origin
 
-#      # 方法1：merge（推荐，最稳定）
-#      - name: Merge upstream into main
-#        run: |
-#          git checkout master
-#          git merge upstream/master --no-edit || true
-
-      # 方法2：rebase（更干净的历史）
-      - name: Rebase onto upstream
+      # 方法B：合并 upstream 到 master（保留 origin 的独立提交）
+      - name: Merge upstream into master
         run: |
           git checkout master
-          git rebase upstream/master || true
+          git merge upstream/master --no-edit
 
       # 推送到你的仓库
-      - name: Push changes
+      - name: Push merged result to origin
         run: |
           git push origin master
